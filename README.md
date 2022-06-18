@@ -15,5 +15,5 @@ DB_PASSWORD: DATABASE_PASSWORD_HERE
 ```
 
 To change the Title add the name after url like this:
-###`protocol://root/HERE`
+### `protocol://root/HERE`
 

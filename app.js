@@ -1,6 +1,6 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
+const express = require("express"); // Enable express js
+const bodyParser = require("body-parser"); // For getting user data
+const mongoose = require("mongoose"); // CRUD in database
 const { Schema } = mongoose; // Destructure Schema from mongoose
 const lodash = require("lodash"); // For string manipulation
 const env = require('dotenv').config();
@@ -48,8 +48,8 @@ app.get("/", function (req, res) {
 });
 app.post("/", async function (req, res) {
 
-    const item = req.body.newItem;
-    const currentList = req.body.list;
+    const item = req.body.newItem; // Get todo
+    const currentList = req.body.list; // Get title name
 
     if (item) {
         const itemss = new toDos({
@@ -60,10 +60,14 @@ app.post("/", async function (req, res) {
             // Insert only if user type in something
             res.redirect("/"); // Redirect to refresh the page
         } else {
+            // If the post is not the default title
             list.findOne(
+                // The find the exiting title from db 
                 { name: currentList },
                 async function (err, foundedList) {
                     if (!err) {
+                        // push the todo in thr itemss array 
+                        // And save
                         await foundedList.items.push(itemss);
                         await foundedList.save();
                         res.redirect(`/${currentList}`);
@@ -72,6 +76,8 @@ app.post("/", async function (req, res) {
             );
         }
     } else {
+        // If user does not post with empty
+        // Redirect base on user current page
         if (currentList === "Today") {
             res.redirect("/");
         } else {
@@ -93,9 +99,12 @@ app.post("/checkBox", (req, res) => {
             } else {
                 console.log(result.deletedCount);
                 res.redirect("/");
+                // Redirect after deleted one of the todo
             }
         });
     } else {
+        // If user check not came from default title 
+        // Then find the specific title and remove checked list
         list.findOneAndUpdate({ 
                 name: currentList 
             }, 
@@ -109,6 +118,7 @@ app.post("/checkBox", (req, res) => {
                 // If there its no error redirect 
                 if (!err) {
                     res.redirect(`/${currentList}`);
+                    // Redirect if no error
                 }
         });
 
@@ -116,9 +126,12 @@ app.post("/checkBox", (req, res) => {
 });
 
 app.get("/:category", (req, res) => {
-    const request = lodash.capitalize(req.params.category);
+    // When user create diff title from url
+
+    const request = lodash.capitalize(req.params.category); // Get the title name from url
 
     list.findOne({ name: request }, (err, result) => {
+        // If the name does in exist in database then we insert 
         if (!err && !result) {
             const lists = new list({
                 name: request,
@@ -129,6 +142,8 @@ app.get("/:category", (req, res) => {
 
             res.redirect(`/${request}`);
         } else {
+            // Or else get the list and itmem
+            // Then render to the page
             res.render("list", {
                 listTitle: result.name,
                 newListItems: result.items,
@@ -139,5 +154,6 @@ app.get("/:category", (req, res) => {
 
 
 app.listen(3000, function () {
+    // A localhost:3000
     console.log("Server started on port 3000");
 });
