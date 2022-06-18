@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const { Schema } = mongoose; // Destructure Schema from mongoose
 const lodash = require("lodash"); // For string manipulation
+const env = require('dotenv').config();
 
 const app = express();
 app.set("view engine", "ejs"); // Set EJS
@@ -26,15 +27,12 @@ const toDos = mongoose.model("ToDo", itemSchema);
 const list = mongoose.model("List", listSchema);
 
 // Connection string
-const dbName = "toDosList",
-    userName = "Jun0311",
-    password = "CjunTisaacN";
 mongoose.connect(
-    `mongodb+srv://${userName}:${password}@cluster0.uvrr1.mongodb.net/${dbName}?retryWrites=true&w=majority`
+    `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.uvrr1.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
 );
 
 app.get("/", function (req, res) {
-    // Home dir when user entered
+   // Home dir when user entered
     toDos.find({}, (err, toDo) => {
         // Get all the data in db
         if (err) {
@@ -49,6 +47,7 @@ app.get("/", function (req, res) {
     });
 });
 app.post("/", async function (req, res) {
+
     const item = req.body.newItem;
     const currentList = req.body.list;
 
@@ -107,6 +106,7 @@ app.post("/checkBox", (req, res) => {
                     } 
                 } 
             }, (err, result) => {
+                // If there its no error redirect 
                 if (!err) {
                     res.redirect(`/${currentList}`);
                 }
