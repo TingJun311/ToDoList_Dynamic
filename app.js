@@ -28,7 +28,7 @@ const list = mongoose.model("List", listSchema);
 
 // Connection string
 mongoose.connect(
-    `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.uvrr1.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+    `mongodb+srv://Jun0311:CjunTisaacN@cluster0.uvrr1.mongodb.net/toDosList?retryWrites=true&w=majority`
 );
 
 app.get("/", function (req, res) {
